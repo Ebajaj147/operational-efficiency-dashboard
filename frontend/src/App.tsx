@@ -11,8 +11,8 @@ import { Vendors } from './pages/Vendors';
 import { Reports } from './pages/Reports';
 import { LockedTabOverlay } from './components/common/LockedTabOverlay';
 
-// Try-and-buy: These tabs are locked for free users
-const LOCKED_TABS: TabId[] = ['staff', 'locations', 'vendors', 'reports'];
+// Try-and-buy: These tabs start locked for demo purposes
+const INITIAL_LOCKED_TABS: TabId[] = ['staff', 'locations', 'vendors', 'reports'];
 
 const TAB_NAMES: Record<TabId, string> = {
   overview: 'Overview',
@@ -24,14 +24,14 @@ const TAB_NAMES: Record<TabId, string> = {
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [lockedTabs, setLockedTabs] = useState<TabId[]>(INITIAL_LOCKED_TABS);
 
   const handleRequestAccess = () => {
-    // In production, this would open a contact form or redirect to sales
-    window.open('https://ottimate.com/contact', '_blank');
+    setLockedTabs(prev => prev.filter(tab => tab !== activeTab));
   };
 
   const renderPage = () => {
-    const isLocked = LOCKED_TABS.includes(activeTab);
+    const isLocked = lockedTabs.includes(activeTab);
 
     if (isLocked) {
       return (
@@ -62,7 +62,7 @@ function App() {
     <FilterProvider>
       <div className="min-h-screen bg-slate-50">
         <Header />
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} lockedTabs={LOCKED_TABS} />
+        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} lockedTabs={lockedTabs} />
         <FilterBar />
         <main className="max-w-screen-2xl mx-auto px-6 py-6">
           {renderPage()}
