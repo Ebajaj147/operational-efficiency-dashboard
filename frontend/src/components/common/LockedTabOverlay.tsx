@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Lock, Sparkles } from 'lucide-react';
 
 interface LockedTabOverlayProps {
@@ -6,6 +7,17 @@ interface LockedTabOverlayProps {
 }
 
 export function LockedTabOverlay({ tabName, onRequestAccess }: LockedTabOverlayProps) {
+  const [dismissed, setDismissed] = useState(false);
+
+  if (dismissed) return null;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDismissed(true);
+    onRequestAccess();
+  };
+
   return (
     <div className="relative">
       {/* Blurred background placeholder */}
@@ -48,7 +60,8 @@ export function LockedTabOverlay({ tabName, onRequestAccess }: LockedTabOverlayP
 
           <div className="space-y-3">
             <button
-              onClick={onRequestAccess}
+              type="button"
+              onClick={handleClick}
               className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
             >
               <Sparkles size={18} />
