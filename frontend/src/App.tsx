@@ -11,8 +11,8 @@ import { Vendors } from './pages/Vendors';
 import { Reports } from './pages/Reports';
 import { LockedTabOverlay } from './components/common/LockedTabOverlay';
 
-// Try-and-buy: These tabs are locked for free users
-const LOCKED_TABS: TabId[] = ['staff', 'locations', 'vendors', 'reports'];
+// Try-and-buy: These tabs start locked but can be unlocked for demo
+const INITIAL_LOCKED_TABS: TabId[] = ['staff', 'locations', 'vendors', 'reports'];
 
 const TAB_NAMES: Record<TabId, string> = {
   overview: 'Overview',
@@ -24,16 +24,25 @@ const TAB_NAMES: Record<TabId, string> = {
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [unlockedTabs, setUnlockedTabs] = useState<TabId[]>([]);
+
+  // Check if a tab is currently locked
+  const isTabLocked = (tab: TabId) => {
+    return INITIAL_LOCKED_TABS.includes(tab) && !unlockedTabs.includes(tab);
+  };
+
+  // Get list of currently locked tabs for navigation display
+  const lockedTabs = INITIAL_LOCKED_TABS.filter(tab => !unlockedTabs.includes(tab));
 
   const handleRequestAccess = () => {
-    // In production, this would open a contact form or redirect to sales
-    window.open('https://ottimate.com/contact', '_blank');
+    // Demo mode: unlock the current tab when CTA is clicked
+    if (!unlockedTabs.includes(activeTab)) {
+      setUnlockedTabs([...unlockedTabs, activeTab]);
+    }
   };
 
   const renderPage = () => {
-    const isLocked = LOCKED_TABS.includes(activeTab);
-
-    if (isLocked) {
+    if (isTabLocked(activeTab)) {
       return (
         <LockedTabOverlay
           tabName={TAB_NAMES[activeTab]}
@@ -62,7 +71,7 @@ function App() {
     <FilterProvider>
       <div className="min-h-screen bg-slate-50">
         <Header />
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} lockedTabs={LOCKED_TABS} />
+        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} lockedTabs={lockedTabs} />
         <FilterBar />
         <main className="max-w-screen-2xl mx-auto px-6 py-6">
           {renderPage()}
