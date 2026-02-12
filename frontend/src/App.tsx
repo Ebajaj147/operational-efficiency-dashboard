@@ -62,7 +62,7 @@ function App() {
     <FilterProvider>
       <div className="min-h-screen bg-slate-50">
         <Header />
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} lockedTabs={lockedTabs} />
+        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <FilterBar />
         <main className="max-w-screen-2xl mx-auto px-6 py-6">
           {renderPage()}
